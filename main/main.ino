@@ -1,6 +1,13 @@
 #include "HomeSpan.h"
 #include "DEV_RELAY.h"
 
+#define NUM_SWITCHES 4
+
+int relayPins[NUM_SWITCHES] = {12, 14, 27, 26};
+const char* switchesName[NUM_SWITCHES] = {"Front Light", "Black Light", "Flex1", "Flex2"};
+
+DEV_RELAY* switches[NUM_SWITCHES];
+
 void setup() {
   Serial.begin(115200);
   homeSpan.setPairingCode("11122333");
@@ -17,29 +24,13 @@ void setup() {
     new Service::AccessoryInformation();
       new Characteristic::Identify();
 
-  new SpanAccessory();
+  for (int i = 0; i < NUM_SWITCHES; i++) {
+    new SpanAccessory();
     new Service::AccessoryInformation();
-      new Characteristic::Identify();
-      new Characteristic::Name("Front Light");
-    new DEV_RELAY(12);
-
-  new SpanAccessory();
-    new Service::AccessoryInformation();
-      new Characteristic::Identify();
-      new Characteristic::Name("Black Light");
-    new DEV_RELAY(14);
-
-  new SpanAccessory();
-    new Service::AccessoryInformation();
-      new Characteristic::Identify();
-      new Characteristic::Name("Flex1");
-    new DEV_RELAY(27);
-
-  new SpanAccessory();
-    new Service::AccessoryInformation();
-      new Characteristic::Identify();
-      new Characteristic::Name("Flex2");
-    new DEV_RELAY(26);
+    new Characteristic::Identify();
+    new Characteristic::Name(switchesName[i]);
+    switches[i] = new DEV_RELAY(relayPins[i]);
+  }
 }
 void loop() {
   homeSpan.poll();

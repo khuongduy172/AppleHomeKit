@@ -1,5 +1,3 @@
-#include "Arduino.h"
-#include "esp32-hal-gpio.h"
 struct DEV_RELAY : Service::Switch {
   int relayPin;
   bool powerOn = false;

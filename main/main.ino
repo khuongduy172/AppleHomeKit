@@ -4,6 +4,7 @@
 #define NUM_SWITCHES 4
 
 int relayPins[NUM_SWITCHES] = {12, 14, 27, 26};
+int buttonPins[NUM_SWITCHES] = {4, 16, 17, 5};
 const char* switchesName[NUM_SWITCHES] = {"Front Light", "Black Light", "Flex1", "Flex2"};
 
 DEV_RELAY* switches[NUM_SWITCHES];
@@ -29,7 +30,7 @@ void setup() {
     new Service::AccessoryInformation();
     new Characteristic::Identify();
     new Characteristic::Name(switchesName[i]);
-    switches[i] = new DEV_RELAY(relayPins[i]);
+    switches[i] = new DEV_RELAY(relayPins[i], buttonPins[i]);
   }
 }
 void loop() {

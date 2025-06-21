@@ -19,7 +19,7 @@ void setup() {
   homeSpan.setApTimeout(300);
   homeSpan.enableAutoStartAP();
   
-  homeSpan.begin(Category::Bridges, "Monitor Light");
+  homeSpan.begin(Category::Bridges, "Desk Bridges");
 
   new SpanAccessory();
     new Service::AccessoryInformation();

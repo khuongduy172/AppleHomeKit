@@ -10,9 +10,10 @@ struct DEV_RELAY : Service::Switch {
   }
 
   boolean update() {
-    digitalWrite(relayPin, power.getNewVal() ? HIGH : LOW);
+    boolean powerValue = power->getNewVal() ? true : false;
+    digitalWrite(relayPin, powerValue ? HIGH : LOW);
     
-    power->setValidValues(powerOn);
+    power->setValidValues(powerValue);
     return (true);
   }
 };

@@ -1,3 +1,4 @@
+#include <WiFi.h>
 #include "HomeSpan.h"
 #include "DEV_RELAY.h"
 
@@ -10,14 +11,13 @@ DEV_RELAY* switches[NUM_SWITCHES];
 
 void setup() {
   Serial.begin(115200);
-  homeSpan.setPairingCode("11122333");
 
+  homeSpan.setPairingCode("11122333");
   homeSpan.setControlPin(4);
   homeSpan.setStatusPin(8);
-
   homeSpan.setApTimeout(300);
   homeSpan.enableAutoStartAP();
-  
+
   homeSpan.begin(Category::Bridges, "Desk Bridges");
 
   new SpanAccessory();
@@ -32,6 +32,7 @@ void setup() {
     switches[i] = new DEV_RELAY(relayPins[i]);
   }
 }
+
 void loop() {
   homeSpan.poll();
 }

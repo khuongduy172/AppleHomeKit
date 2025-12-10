@@ -1,11 +1,14 @@
 #include <esp_now.h>
 #include <WiFi.h>
 
-#define BUTTON_PIN 4  // D4 on most ESP32 boards
+#define BUTTON1_PIN 5  // D4 on most ESP32 boards
+#define BUTTON2_PIN 6
 
-uint8_t slaveAddress[] = {0xF4, 0x65, 0x0B, 0xEA, 0xC7, 0x84};  // MAC của slave
+uint8_t slaveA[] = {0x8C, 0xD0, 0xB2, 0xA9, 0xE7, 0x6A};  // MAC của slave 8C:D0:B2:A9:E7:6A
+uint8_t slaveB[] = {0x8C, 0xD0, 0xB2, 0xA8, 0x10, 0xE1};  // 8C:D0:B2:A8:10:E1
 
-bool lastButtonState = HIGH;
+bool lastButton1 = HIGH;
+bool lastButton2 = HIGH;
 
 void onSendComplete(const uint8_t *mac, esp_now_send_status_t status) {
   Serial.print("[ESP-NOW] Send to ");
@@ -17,10 +20,22 @@ void onSendComplete(const uint8_t *mac, esp_now_send_status_t status) {
   Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Success" : "Fail");
 }
 
+// ----------------- ADD PEER FUNCTION -----------------
+void addPeer(uint8_t *address) {
+  esp_now_peer_info_t peer = {};
+  memcpy(peer.peer_addr, address, 6);
+  peer.channel = 0;
+  peer.encrypt = false;
+  if (esp_now_add_peer(&peer) != ESP_OK) {
+    Serial.println("Failed to add peer!");
+  }
+}
+
 void setup() {
   Serial.begin(115200);
-
-  pinMode(BUTTON_PIN, INPUT_PULLUP);
+  Serial.setTxTimeoutMs(0);
+  pinMode(BUTTON1_PIN, INPUT_PULLUP);
+  pinMode(BUTTON2_PIN, INPUT_PULLUP);
 
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();
@@ -32,30 +47,41 @@ void setup() {
 
   esp_now_register_send_cb(onSendComplete);
 
-  esp_now_peer_info_t peerInfo = {};
-  memcpy(peerInfo.peer_addr, slaveAddress, 6);
-  peerInfo.channel = 0;
-  peerInfo.encrypt = false;
-
-  if (esp_now_add_peer(&peerInfo) != ESP_OK) {
-    Serial.println("Failed to add peer");
-    return;
-  }
+  // Add both slaves
+  addPeer(slaveA);
+  addPeer(slaveB);
 
   Serial.println("Master ready");
 }
 
 void loop() {
-  bool buttonState = digitalRead(BUTTON_PIN);
+  // Read button inputs
+  bool b1 = digitalRead(BUTTON1_PIN);
+  bool b2 = digitalRead(BUTTON2_PIN);
 
-  // Gửi khi nút chuyển trạng thái
-  if (buttonState != lastButtonState) {
-    lastButtonState = buttonState;
-    uint8_t value = (buttonState == LOW) ? 1 : 0;
-    esp_now_send(slaveAddress, &value, sizeof(value));
-    Serial.printf("[SEND] Button %s -> Sent value: %d\n", buttonState == LOW ? "Pressed" : "Released", value);
-    delay(50);  // debounce
+  // ----------------- BUTTON 1 → SLAVE A -----------------
+  if (b1 != lastButton1) {
+    lastButton1 = b1;
+    uint8_t value = (b1 == LOW) ? 1 : 0;
+    esp_now_send(slaveA, &value, sizeof(value));
+    Serial.printf("[SEND] Button1 %s → Slave A (value=%d)\n",
+                  b1 == LOW ? "Pressed" : "Released",
+                  value);
+    delay(80); // debounce
+  }
+
+  // ----------------- BUTTON 2 → SLAVE B -----------------
+  if (b2 != lastButton2) {
+    lastButton2 = b2;
+    uint8_t value = (b2 == LOW) ? 1 : 0;
+    esp_now_send(slaveB, &value, sizeof(value));
+    Serial.printf("[SEND] Button2 %s → Slave B (value=%d)\n",
+                  b2 == LOW ? "Pressed" : "Released",
+                  value);
+    delay(80); // debounce
   }
 
   delay(10);
 }
+
+

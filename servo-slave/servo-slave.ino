@@ -1,7 +1,10 @@
 #include <WiFi.h>
 #include <esp_now.h>
+#include <ESP32Servo.h> 
 
-#define LED_PIN 8
+#define SERVO_PIN 4
+
+Servo myServo;
 
 void onReceive(const uint8_t *mac, const uint8_t *incomingData, int len) {
   Serial.printf("Received %d bytes from %02X:%02X:%02X:%02X:%02X:%02X\n",
@@ -11,15 +14,21 @@ void onReceive(const uint8_t *mac, const uint8_t *incomingData, int len) {
 
   if (len == 1) {
     bool state = incomingData[0];
-    digitalWrite(LED_PIN, state ? HIGH : LOW);
-    Serial.printf("Received from Master: %s\n", state ? "ON" : "OFF");
+    if (state == false) {
+      myServo.write(90);   // ON → move to 90°
+      Serial.println("Servo ON → 90°");
+      delay(200);
+      myServo.write(0);
+    }
   }
 }
 
 void setup() {
   Serial.begin(115200);
   // Serial.setTxTimeoutMs(0);
-  pinMode(LED_PIN, OUTPUT);
+  myServo.setPeriodHertz(50);
+  myServo.attach(SERVO_PIN, 500, 2400);   // Attach servo
+  myServo.write(0);                       // Start position at 0°
 
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();  // Không kết nối Wi-Fi

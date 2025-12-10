@@ -2,10 +2,10 @@
 #include "HomeSpan.h"
 #include "DEV_RELAY.h"
 
-#define NUM_SWITCHES 4
+#define NUM_SWITCHES 6
 
-int relayPins[NUM_SWITCHES] = {3, 2, 1, 0};
-const char* switchesName[NUM_SWITCHES] = {"Front Light", "Back Light", "Drawler Light", "Flex"};
+int relayPins[NUM_SWITCHES] = {3, 2, 1, 0, 5, 6};
+const char* switchesName[NUM_SWITCHES] = {"Front Light", "Back Light", "Drawler Light", "Flex", "Remote", "PC"};
 
 DEV_RELAY* switches[NUM_SWITCHES];
 

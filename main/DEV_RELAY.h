@@ -5,7 +5,7 @@ struct DEV_RELAY : Service::Switch {
     this->relayPin = replayPin;
     pinMode(replayPin, OUTPUT);
 
-    power = new Characteristic::On(true);
+    power = new Characteristic::On(0, true);
     digitalWrite(replayPin, HIGH);
   }
 

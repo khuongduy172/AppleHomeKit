@@ -15,9 +15,9 @@ void onReceive(const uint8_t *mac, const uint8_t *incomingData, int len) {
   if (len == 1) {
     bool state = incomingData[0];
     if (state == false) {
-      myServo.write(90);
+      myServo.write(20);
     } else {
-      myServo.write(0);
+      myServo.write(60);
     }
   }
 }
@@ -27,12 +27,13 @@ void setup() {
   // Serial.setTxTimeoutMs(0);
   myServo.setPeriodHertz(50);
   myServo.attach(SERVO_PIN, 500, 2400);   // Attach servo
-  myServo.write(0);                       // Start position at 0°
+  myServo.write(20);                       // Start position at 0°
 
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();  // Không kết nối Wi-Fi
 
   // In ra địa chỉ MAC để lấy dán vào Master
+  // switch-servo 
   Serial.print("Slave MAC: ");
   Serial.println(WiFi.macAddress());
 

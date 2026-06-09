@@ -68,7 +68,6 @@ inline void createDHT11Accessory() {
     new Service::AccessoryInformation();
       new Characteristic::Identify();
       new Characteristic::Name("Temp & Humid");
-
     new TempSensor();
     new HumiditySensor();
 }

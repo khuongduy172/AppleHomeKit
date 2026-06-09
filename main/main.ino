@@ -3,10 +3,10 @@
 #include "DEV_RELAY.h"
 #include "DHT11_homekit.h"
 
-#define NUM_SWITCHES 6
+#define NUM_SWITCHES 7
 
-int relayPins[NUM_SWITCHES] = {3, 2, 1, 0, 5, 6};
-const char* switchesName[NUM_SWITCHES] = {"Front Light", "Back Light", "Drawler Light", "Flex", "Remote", "PC"};
+int relayPins[NUM_SWITCHES] = {3, 2, 1, 0, 5, 6, 7};
+const char* switchesName[NUM_SWITCHES] = {"Front Light", "Back Light", "Drawler Light", "Flex", "Remote", "PC", "Switch"};
 
 DEV_RELAY* switches[NUM_SWITCHES];
 
@@ -27,10 +27,10 @@ void setup() {
 
   for (int i = 0; i < NUM_SWITCHES; i++) {
     new SpanAccessory();
-    new Service::AccessoryInformation();
-    new Characteristic::Identify();
-    new Characteristic::Name(switchesName[i]);
-    switches[i] = new DEV_RELAY(relayPins[i]);
+      new Service::AccessoryInformation();
+        new Characteristic::Identify();
+        new Characteristic::Name(switchesName[i]);
+      switches[i] = new DEV_RELAY(relayPins[i]);
   }
 
   initDHT11();

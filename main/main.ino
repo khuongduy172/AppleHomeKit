@@ -1,6 +1,7 @@
 #include <WiFi.h>
 #include "HomeSpan.h"
 #include "DEV_RELAY.h"
+#include "DEV_LED.h"
 #include "DHT11_homekit.h"
 
 #define NUM_SWITCHES 7
@@ -32,6 +33,12 @@ void setup() {
         new Characteristic::Name(switchesName[i]);
       switches[i] = new DEV_RELAY(relayPins[i]);
   }
+
+  new SpanAccessory();
+    new Service::AccessoryInformation();
+      new Characteristic::Identify();
+      new Characteristic::Name("Dim LED");
+    new DEV_DimmableLED(9);
 
   initDHT11();
   createDHT11Accessory();
